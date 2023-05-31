@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  font-family: Roboto, sans-serif;
+  @apply bg-primary-content;
+}
+
+section {
+  @apply my-6;
+}
+
