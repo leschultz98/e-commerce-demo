@@ -1,6 +1,6 @@
 import PhoneIcon from '@mui/icons-material/Phone';
-import { useEffect, useState } from 'react';
-import { getLocalData, setLocalData } from '../utils';
+import { useState } from 'react';
+import { getInitState, setLocalData } from '../utils';
 import EditWrapper from './EditWrapper.tsx';
 
 const IMAGE = 'https://binbadecor.vn/wp-content/uploads/2022/03/thiet-ke-shop-quan-ao-2.jpg';
@@ -15,21 +15,10 @@ const STORE_DESCRIPTION = 'storeDescription';
 const STORE_PHONE = 'storePhone';
 
 export default function SellerInfo() {
-  const [image, setImage] = useState(IMAGE);
-  const [name, setName] = useState(NAME);
-  const [description, setDescription] = useState(DESCRIPTION);
-  const [phone, setPhone] = useState(PHONE);
-
-  useEffect(() => {
-    const image = getLocalData(STORE_IMAGE);
-    if (image) setImage(image);
-    const name = getLocalData(STORE_NAME);
-    if (name) setName(name);
-    const description = getLocalData(STORE_DESCRIPTION);
-    if (description) setDescription(description);
-    const phone = getLocalData(STORE_PHONE);
-    if (phone) setPhone(phone);
-  }, []);
+  const [image, setImage] = useState(getInitState<string>(STORE_IMAGE, IMAGE));
+  const [name, setName] = useState(getInitState<string>(STORE_NAME, NAME));
+  const [description, setDescription] = useState(getInitState<string>(STORE_DESCRIPTION, DESCRIPTION));
+  const [phone, setPhone] = useState(getInitState<string>(STORE_PHONE, PHONE));
 
   return (
     <section>
