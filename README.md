@@ -1,7 +1,29 @@
+## Getting started
+
+Install the dependencies:
+
+```
+yarn
+```
+
+## Scripts
+
+- `yarn dev` - start a development server with hot reload.
+- `yarn build` - build for production. The generated files will be on the `dist` folder.
+
+## Accounts
+
+| Username | Password |
+|----------|----------|
+| buyer    | buyer    |
+| owner    | owner    |
+
+## Intro
+
 Create a seller profile page for an e-commerce website that displays basic
 info about the seller and a list of what they sell.
 
-### Requirement:
+## Requirement:
 
 - Create a simple react web app with one single page: a seller profile page with basic
   aesthetic styling
@@ -16,7 +38,7 @@ info about the seller and a list of what they sell.
 - Seller profile info has name, phone number, description
 - Each product has name, description, and price
 
-### Bonus point:
+## Bonus point:
 
 Implement a way for the owner to edit the order of their products displayed on the page.
 
