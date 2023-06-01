@@ -1,7 +1,7 @@
-import Header from './components/Header.tsx';
-import Products from './components/Products.tsx';
-import SellerInfo from './components/SellerInfo.tsx';
-import Store from './components/Store.tsx';
+import Header from './components/Header';
+import Products from './components/Products';
+import SellerInfo from './components/SellerInfo';
+import Store from '@/store';
 
 export default function App() {
   return (

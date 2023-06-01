@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import useStore from '../hooks/useStore.ts';
+import { useStore } from '@/hooks';
 import Login from './Login.tsx';
 
 export default function Header() {

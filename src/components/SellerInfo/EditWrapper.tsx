@@ -1,8 +1,8 @@
 import EditIcon from '@mui/icons-material/Edit';
 import { ReactNode, useMemo, useState } from 'react';
-import { OWNER } from '../constants';
-import useStore from '../hooks/useStore.ts';
-import Modal from './Modal.tsx';
+import { OWNER } from '@/constants';
+import { useStore } from '@/hooks';
+import Modal from '../Common/Modal.tsx';
 
 interface EditWrapperInterface {
   initValue: string;

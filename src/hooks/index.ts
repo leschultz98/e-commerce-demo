@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
-import { Context, State } from '../store';
+import { Context, State } from '@/store';
 
-export default function useStore() {
+export function useStore() {
   const { state, setState } = useContext(Context);
 
   const dispatch = useCallback((v: State) => setState((state) => ({ ...state, ...v })), []);

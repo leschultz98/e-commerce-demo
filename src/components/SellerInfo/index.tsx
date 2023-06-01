@@ -1,6 +1,6 @@
 import PhoneIcon from '@mui/icons-material/Phone';
 import { useState } from 'react';
-import { getInitState, setLocalData } from '../utils';
+import { getInitState, setLocalData } from '@/utils';
 import EditWrapper from './EditWrapper.tsx';
 
 const IMAGE = 'https://binbadecor.vn/wp-content/uploads/2022/03/thiet-ke-shop-quan-ao-2.jpg';

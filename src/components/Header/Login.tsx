@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import useStore from '../hooks/useStore.ts';
-import { login } from '../utils';
-import Modal from './Modal.tsx';
+import { useStore } from '@/hooks';
+import { login } from '@/utils';
+import Modal from '../Common/Modal.tsx';
 
 interface Interface {
   onClose: () => void;

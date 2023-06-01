@@ -1,4 +1,4 @@
-import { OWNER } from '../constants';
+import { OWNER } from '@/constants';
 
 export const getLocalData = (key: string, isString = true) => {
   const data = localStorage.getItem(key);
