@@ -15,6 +15,8 @@ export interface Product {
   price: number;
 }
 
+type Cart = Record<string, number>;
+
 const initProducts = Array.from<unknown, Product>({ length: 6 }, () => ({
   id: crypto.randomUUID(),
   name: 'Shoes',
@@ -24,6 +26,7 @@ const initProducts = Array.from<unknown, Product>({ length: 6 }, () => ({
 }));
 
 const PRODUCTS = 'products';
+const CART = 'cart';
 
 const wrapperClass =
   'grid grid-cols-1 min-[840px]:grid-cols-2 min-[1180px]:grid-cols-3 min-[1520px]:grid-cols-4 gap-6 rounded-2xl p-8';
@@ -35,6 +38,7 @@ export default function Products() {
   } = useStore();
 
   const [products, setProducts] = useState(getInitState<Product[]>(PRODUCTS, initProducts, false));
+  const [cart, setCart] = useState(getInitState<Cart>(CART, {}, false));
   const [isAdd, setIsAdd] = useState(false);
   const [isRemove, setIsRemove] = useState(false);
   const [isReOrder, setIsReOrder] = useState(false);
@@ -55,6 +59,22 @@ export default function Products() {
 
     newItems.splice(dragOverItemIndex.current, 0, newItems.splice(dragItemIndex.current, 1)[0]);
     setProducts(newItems);
+  };
+
+  const updateCart = (id: string, count: number) => {
+    const result = { ...cart, [id]: count };
+    if (!count) delete result[id];
+
+    setCart(result);
+    setLocalData(CART, result, false);
+
+    const log: Cart = {};
+    for (const [id, count] of Object.entries(result)) {
+      const match = products.find((p) => p.id === id);
+      if (match) log[`${match.name} - ${match.id}`] = count;
+    }
+    console.log('%cCart', 'color:blue; font-size:1.5rem');
+    console.table(log);
   };
 
   return (
@@ -104,49 +124,51 @@ export default function Products() {
               isDragging && originalItems.current[dragItemIndex.current] === item ? 'opacity-0' : 'opacity-100'
             }`}
           >
-            <ProductCard {...item} />
+            <ProductCard {...item} count={cart[item.id] || 0} onChangeCart={updateCart} />
           </div>
         ))}
 
-        <div className={`${wrapperClass} absolute inset-0 flex flex-wrap gap-6`}>
-          {products.map((product, index) => (
-            <div
-              key={product.id}
-              className={`${itemClass} ${
-                isRemove
-                  ? 'flex justify-center items-center cursor-pointer text-error opacity-0 hover:opacity-100 hover:bg-base-300/50'
-                  : ''
-              } ${isReOrder ? 'cursor-grab' : ''}`}
-              draggable
-              onDragStart={(event) => {
-                if (!isReOrder) {
-                  event.preventDefault();
-                  return;
-                }
-                originalItems.current = products;
-                dragItemIndex.current = index;
+        {userType === OWNER && (
+          <div className={`${wrapperClass} absolute inset-0 flex flex-wrap gap-6`}>
+            {products.map((product, index) => (
+              <div
+                key={product.id}
+                className={`${itemClass} ${
+                  isRemove
+                    ? 'flex justify-center items-center cursor-pointer text-error opacity-0 hover:opacity-100 hover:bg-base-300/50'
+                    : ''
+                } ${isReOrder ? 'cursor-grab' : ''}`}
+                draggable
+                onDragStart={(event) => {
+                  if (!isReOrder) {
+                    event.preventDefault();
+                    return;
+                  }
+                  originalItems.current = products;
+                  dragItemIndex.current = index;
 
-                event.dataTransfer.effectAllowed = 'move';
-                const draggedEl = document.getElementById(product.id);
-                if (draggedEl) {
-                  event.dataTransfer.setDragImage(draggedEl, event.nativeEvent.offsetX, event.nativeEvent.offsetY);
-                }
+                  event.dataTransfer.effectAllowed = 'move';
+                  const draggedEl = document.getElementById(product.id);
+                  if (draggedEl) {
+                    event.dataTransfer.setDragImage(draggedEl, event.nativeEvent.offsetX, event.nativeEvent.offsetY);
+                  }
 
-                setIsDragging(true);
-              }}
-              onDragOver={() => {
-                dragOverItemIndex.current = index;
-                reOrderProducts();
-              }}
-              onDragEnd={() => setIsDragging(false)}
-              onClick={() => {
-                if (isRemove) setProducts((v) => v.filter((p) => p !== product));
-              }}
-            >
-              {isRemove && <DeleteRoundedIcon fontSize="large" />}
-            </div>
-          ))}
-        </div>
+                  setIsDragging(true);
+                }}
+                onDragOver={() => {
+                  dragOverItemIndex.current = index;
+                  reOrderProducts();
+                }}
+                onDragEnd={() => setIsDragging(false)}
+                onClick={() => {
+                  if (isRemove) setProducts((v) => v.filter((p) => p !== product));
+                }}
+              >
+                {isRemove && <DeleteRoundedIcon fontSize="large" />}
+              </div>
+            ))}
+          </div>
+        )}
       </FlipMove>
     </section>
   );
