@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { useStore } from '@/hooks';
 import { login } from '@/utils';
+import { useState } from 'react';
 import Modal from '../Common/Modal.tsx';
 
 interface Interface {
@@ -57,7 +57,7 @@ export default function Login({ onClose }: Interface) {
         </div>
 
         <div className="form-control mt-6">
-          <button type="submit" className="btn btn-primary" disabled={!userName || !password} onClick={handleLogin}>
+          <button type="submit" className="btn btn-primary" disabled={!userName || !password}>
             Login
           </button>
           {error && <div className="text-error">Wrong credentials!</div>}

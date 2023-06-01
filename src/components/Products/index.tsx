@@ -1,6 +1,10 @@
-import { getInitState } from '@/utils';
-import { useRef, useState } from 'react';
+import { OWNER } from '@/constants';
+import { useStore } from '@/hooks';
+import { getInitState, setLocalData } from '@/utils';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import { useEffect, useRef, useState } from 'react';
 import FlipMove from 'react-flip-move';
+import AddProduct from './AddProduct.tsx';
 import ProductCard from './ProductCard.tsx';
 
 export interface Product {
@@ -23,29 +27,76 @@ const PRODUCTS = 'products';
 
 const wrapperClass =
   'grid grid-cols-1 min-[840px]:grid-cols-2 min-[1180px]:grid-cols-3 min-[1520px]:grid-cols-4 gap-6 rounded-2xl p-8';
-const itemClass = 'justify-self-center w-80 h-[400px]';
+const itemClass = 'justify-self-center w-80 max-w-full h-[400px]';
 
 export default function Products() {
-  const [items, setItems] = useState(getInitState<Product[]>(PRODUCTS, initProducts, false));
+  const {
+    state: { userType },
+  } = useStore();
+
+  const [products, setProducts] = useState(getInitState<Product[]>(PRODUCTS, initProducts, false));
+  const [isAdd, setIsAdd] = useState(false);
+  const [isRemove, setIsRemove] = useState(false);
+  const [isReOrder, setIsReOrder] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
-  const originalItems = useRef(items);
+  const originalItems = useRef(products);
   const dragItemIndex = useRef(-1);
   const dragOverItemIndex = useRef(-1);
 
-  const updateItems = () => {
-    if (originalItems.current[dragItemIndex.current] === items[dragOverItemIndex.current]) return;
+  useEffect(() => {
+    setLocalData(PRODUCTS, products, false);
+  }, [products]);
+
+  const reOrderProducts = () => {
+    if (originalItems.current[dragItemIndex.current] === products[dragOverItemIndex.current]) return;
 
     const newItems = [...originalItems.current];
 
     newItems.splice(dragOverItemIndex.current, 0, newItems.splice(dragItemIndex.current, 1)[0]);
-    setItems(newItems);
+    setProducts(newItems);
   };
 
   return (
     <section onDragOver={(event) => event.preventDefault()}>
+      {userType === OWNER && (
+        <div className="flex flex-wrap gap-4 mb-4">
+          <button className="btn btn-primary" type="button" onClick={() => setIsAdd(true)}>
+            Add product
+          </button>
+          {isAdd && (
+            <AddProduct
+              onAdd={(product) => setProducts((items) => [...items, product])}
+              onClose={() => setIsAdd(false)}
+            />
+          )}
+
+          <button
+            className="btn btn-secondary"
+            type="button"
+            onClick={() => {
+              setIsRemove((v) => !v);
+              if (isReOrder) setIsReOrder((v) => !v);
+            }}
+          >
+            {isRemove ? 'Cancel ' : ''}Remove product
+          </button>
+
+          <button
+            className="btn btn-accent"
+            type="button"
+            onClick={() => {
+              setIsReOrder((v) => !v);
+              if (isRemove) setIsRemove((v) => !v);
+            }}
+          >
+            {isReOrder ? 'Cancel ' : ''}Re-order products
+          </button>
+        </div>
+      )}
+
       <FlipMove className={`${wrapperClass} bg-gray-300`}>
-        {items.map((item) => (
+        {products.map((item) => (
           <div
             key={item.id}
             id={item.id}
@@ -58,17 +109,25 @@ export default function Products() {
         ))}
 
         <div className={`${wrapperClass} absolute inset-0 flex flex-wrap gap-6`}>
-          {items.map((item, index) => (
+          {products.map((product, index) => (
             <div
-              key={item.id}
-              className={itemClass}
+              key={product.id}
+              className={`${itemClass} ${
+                isRemove
+                  ? 'flex justify-center items-center cursor-pointer text-error opacity-0 hover:opacity-100 hover:bg-base-300/50'
+                  : ''
+              } ${isReOrder ? 'cursor-grab' : ''}`}
               draggable
               onDragStart={(event) => {
-                originalItems.current = items;
+                if (!isReOrder) {
+                  event.preventDefault();
+                  return;
+                }
+                originalItems.current = products;
                 dragItemIndex.current = index;
 
                 event.dataTransfer.effectAllowed = 'move';
-                const draggedEl = document.getElementById(item.id);
+                const draggedEl = document.getElementById(product.id);
                 if (draggedEl) {
                   event.dataTransfer.setDragImage(draggedEl, event.nativeEvent.offsetX, event.nativeEvent.offsetY);
                 }
@@ -77,10 +136,15 @@ export default function Products() {
               }}
               onDragOver={() => {
                 dragOverItemIndex.current = index;
-                updateItems();
+                reOrderProducts();
               }}
               onDragEnd={() => setIsDragging(false)}
-            />
+              onClick={() => {
+                if (isRemove) setProducts((v) => v.filter((p) => p !== product));
+              }}
+            >
+              {isRemove && <DeleteRoundedIcon fontSize="large" />}
+            </div>
           ))}
         </div>
       </FlipMove>

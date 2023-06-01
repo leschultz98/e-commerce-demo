@@ -1,4 +1,4 @@
-import { OWNER } from '@/constants';
+import { BUYER, OWNER } from '@/constants';
 
 export const getLocalData = (key: string, isString = true) => {
   const data = localStorage.getItem(key);
@@ -22,7 +22,7 @@ export function getInitState<T>(key: string, defaultValue: T, isString = true): 
 }
 
 const USERS: Record<string, any> = {
-  buyer: { password: 'buyer', userType: 'buyer' },
+  buyer: { password: 'buyer', userType: BUYER },
   owner: { password: 'owner', userType: OWNER },
 };
 
