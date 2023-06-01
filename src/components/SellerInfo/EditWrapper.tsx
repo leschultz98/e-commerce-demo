@@ -1,33 +1,40 @@
-import EditIcon from '@mui/icons-material/Edit';
-import { ReactNode, useMemo, useState } from 'react';
 import { OWNER } from '@/constants';
 import { useStore } from '@/hooks';
+import EditIcon from '@mui/icons-material/Edit';
+import { ReactNode, useState } from 'react';
 import Modal from '../Common/Modal.tsx';
 
-interface EditWrapperInterface {
+interface EditorI {
+  title: string;
   initValue: string;
   save: (value: string) => void;
+}
+
+interface EditWrapperInterface extends EditorI {
   children: ReactNode;
 }
 
-interface EditorInterface {
-  initValue: string;
-  save: (value: string) => void;
+interface EditorInterface extends EditorI {
   onClose: () => void;
 }
 
-function Editor({ initValue, save, onClose }: EditorInterface) {
+function Editor({ title, initValue, save, onClose }: EditorInterface) {
   const [value, setValue] = useState(initValue);
 
   return (
     <>
-      <input
-        type="text"
-        placeholder="Type here"
-        className="input input-primary w-full"
-        value={value}
-        onChange={(event) => setValue(event.target.value)}
-      />
+      <div className="form-control">
+        <label className="label">
+          <span className="label-text">{title}</span>
+        </label>
+        <input
+          type="text"
+          placeholder="Type here"
+          className="input input-primary w-full"
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+        />
+      </div>
 
       <div className="flex justify-center gap-6 mt-6">
         <button
@@ -48,12 +55,10 @@ function Editor({ initValue, save, onClose }: EditorInterface) {
   );
 }
 
-export default function EditWrapper({ initValue, save, children }: EditWrapperInterface) {
+export default function EditWrapper({ children, ...props }: EditWrapperInterface) {
   const {
     state: { userType },
   } = useStore();
-
-  const editable = useMemo(() => userType === OWNER, [userType]);
 
   const [open, setOpen] = useState(false);
 
@@ -61,7 +66,7 @@ export default function EditWrapper({ initValue, save, children }: EditWrapperIn
     <span className="relative">
       <span>{children}</span>
 
-      {editable && (
+      {userType === OWNER && (
         <button
           className="absolute inset-0 flex justify-center items-center text-info opacity-0 hover:opacity-100 hover:bg-base-300/50"
           type="button"
@@ -72,19 +77,8 @@ export default function EditWrapper({ initValue, save, children }: EditWrapperIn
       )}
 
       {open && (
-        <Modal
-          open={open}
-          onClose={() => {
-            setOpen(false);
-          }}
-        >
-          <Editor
-            initValue={initValue}
-            save={save}
-            onClose={() => {
-              setOpen(false);
-            }}
-          />
+        <Modal open={open} onClose={() => setOpen(false)}>
+          <Editor {...props} onClose={() => setOpen(false)} />
         </Modal>
       )}
     </span>

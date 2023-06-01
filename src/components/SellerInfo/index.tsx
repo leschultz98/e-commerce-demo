@@ -1,6 +1,6 @@
+import { getInitState, setLocalData } from '@/utils';
 import PhoneIcon from '@mui/icons-material/Phone';
 import { useState } from 'react';
-import { getInitState, setLocalData } from '@/utils';
 import EditWrapper from './EditWrapper.tsx';
 
 const IMAGE = 'https://binbadecor.vn/wp-content/uploads/2022/03/thiet-ke-shop-quan-ao-2.jpg';
@@ -25,6 +25,7 @@ export default function SellerInfo() {
       <div className="card lg:card-side bg-base-100 shadow-xl">
         <figure>
           <EditWrapper
+            title="Edit image"
             initValue={image}
             save={(v) => {
               setImage(v);
@@ -38,6 +39,7 @@ export default function SellerInfo() {
         <div className="card-body">
           <h2 className="card-title text-secondary">
             <EditWrapper
+              title="Edit name"
               initValue={name}
               save={(v) => {
                 setName(v);
@@ -49,6 +51,7 @@ export default function SellerInfo() {
           </h2>
 
           <EditWrapper
+            title="Edit description"
             initValue={description}
             save={(v) => {
               setDescription(v);
@@ -61,6 +64,7 @@ export default function SellerInfo() {
           <p className="text-accent">
             <PhoneIcon />
             <EditWrapper
+              title="Edit phone"
               initValue={phone}
               save={(v) => {
                 setPhone(v);
