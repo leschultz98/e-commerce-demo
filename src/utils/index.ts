@@ -15,7 +15,7 @@ export function setLocalData<T>(key: string, value: T | string, isString = true)
   localStorage.setItem(key, value as string);
 }
 
-export function getInitState<T>(key: string, defaultValue: T, isString = true) {
+export function getInitState<T>(key: string, defaultValue: T, isString = true): T {
   const data = getLocalData(key, isString);
   if (data) return data;
   return defaultValue;
